@@ -24,7 +24,7 @@ export function ActivityTimeline({ repoId }: ActivityTimelineProps) {
         setLoading(true)
         
         // Fetch repository data to get basic info
-        const repoResponse = await fetch(`http://localhost:3001/api/repositories/${repoId}`)
+        const repoResponse = await fetch(`/api/repositories/${repoId}`)
         
         if (repoResponse.ok) {
           const repoData = await repoResponse.json()

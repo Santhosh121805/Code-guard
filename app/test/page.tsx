@@ -13,7 +13,7 @@ export default function ApiTestPage() {
         // Test direct fetch
         console.log('Testing API connection...')
         
-        const response = await fetch('http://localhost:3001/api/health')
+        const response = await fetch('/api/health')
         console.log('Response status:', response.status)
         
         if (!response.ok) {
@@ -22,10 +22,10 @@ export default function ApiTestPage() {
         
         const data = await response.json()
         console.log('Health check data:', data)
-        setApiStatus('✅ Backend API is working!')
+        setApiStatus('✅ Next.js API is working!')
 
         // Test repositories
-        const repoResponse = await fetch('http://localhost:3001/api/repositories')
+        const repoResponse = await fetch('/api/repositories')
         const repoData = await repoResponse.json()
         console.log('Repositories data:', repoData)
         setRepositories(repoData.repositories || [])
@@ -61,8 +61,8 @@ export default function ApiTestPage() {
 
         <div className="border border-gray-700 p-4 rounded">
           <h2 className="text-xl font-semibold mb-2">Frontend Status:</h2>
-          <p>✅ Next.js Frontend: http://localhost:3000</p>
-          <p>✅ Backend API: http://localhost:3001</p>
+          <p>✅ Next.js Frontend: http://localhost:3002</p>
+          <p>✅ Next.js API Routes: /api</p>
           <p>✅ Environment: {process.env.NODE_ENV}</p>
           <p>✅ API URL: {process.env.NEXT_PUBLIC_API_BASE_URL}</p>
         </div>

@@ -45,10 +45,20 @@ export function RepositoryOverview({ repoId }: RepositoryOverviewProps) {
         
         // Fetch vulnerability summary
         try {
-          const vulnResponse = await fetch(`http://localhost:3001/api/repositories/${repoId}/vulnerabilities`)
+          const vulnResponse = await fetch(`/api/repositories/${repoId}/vulnerabilities`)
           if (vulnResponse.ok) {
             const vulnData = await vulnResponse.json()
-            setVulnerabilities(vulnData.summary)
+            const vulnerabilities = vulnData.vulnerabilities || []
+            
+            // Calculate summary from vulnerabilities
+            const summary = {
+              total: vulnerabilities.length,
+              critical: vulnerabilities.filter((v: any) => v.severity === 'critical').length,
+              high: vulnerabilities.filter((v: any) => v.severity === 'high').length,
+              medium: vulnerabilities.filter((v: any) => v.severity === 'medium').length,
+              low: vulnerabilities.filter((v: any) => v.severity === 'low').length,
+            }
+            setVulnerabilities(summary)
           }
         } catch (vulnError) {
           console.log('Vulnerabilities not yet available for this repository')
