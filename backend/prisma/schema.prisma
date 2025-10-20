@@ -1,0 +1,373 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+  VIEWER
+}
+
+enum SubscriptionTier {
+  FREE
+  PRO
+  ENTERPRISE
+}
+
+enum VulnerabilitySeverity {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum VulnerabilityStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  FALSE_POSITIVE
+  IGNORED
+}
+
+enum ScanStatus {
+  PENDING
+  SCANNING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum ScanTrigger {
+  WEBHOOK
+  MANUAL
+  SCHEDULED
+  AUTO
+}
+
+enum PullRequestStatus {
+  CREATED
+  MERGED
+  CLOSED
+  REJECTED
+}
+
+enum ActivityType {
+  SCAN_STARTED
+  SCAN_COMPLETED
+  VULNERABILITY_DETECTED
+  VULNERABILITY_FIXED
+  FIX_APPLIED
+  PR_CREATED
+  PR_MERGED
+  REPOSITORY_ADDED
+  REPOSITORY_REMOVED
+  USER_REGISTERED
+  USER_LOGIN
+}
+
+model User {
+  id                String            @id @default(cuid())
+  email             String            @unique
+  username          String?           @unique
+  name              String?
+  avatar            String?
+  role              UserRole          @default(USER)
+  subscriptionTier  SubscriptionTier  @default(FREE)
+  
+  // GitHub integration
+  githubId          String?           @unique
+  githubUsername    String?
+  githubAccessToken String?           // Encrypted
+  
+  // Authentication
+  passwordHash      String?
+  emailVerified     Boolean           @default(false)
+  emailVerifiedAt   DateTime?
+  
+  // Settings
+  settings          Json?             // User preferences, notification settings
+  
+  // Timestamps
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  lastLoginAt       DateTime?
+  
+  // Relations
+  repositories      Repository[]
+  activities        Activity[]
+  notifications     Notification[]
+  refreshTokens     RefreshToken[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("refresh_tokens")
+}
+
+model Repository {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // GitHub repository info
+  githubRepoId    String   @unique
+  name            String
+  fullName        String   // owner/repo-name
+  owner           String
+  defaultBranch   String   @default("main")
+  private         Boolean  @default(false)
+  language        String?
+  description     String?
+  url             String
+  cloneUrl        String
+  
+  // Repository metrics
+  totalFiles      Int      @default(0)
+  totalLinesOfCode Int     @default(0)
+  totalVulnerabilities Int @default(0)
+  criticalCount   Int      @default(0)
+  highCount       Int      @default(0)
+  mediumCount     Int      @default(0)
+  lowCount        Int      @default(0)
+  securityScore   Float    @default(0) // 0-100 score
+  
+  // Scan status
+  scanStatus      ScanStatus @default(PENDING)
+  scanProgress    Int      @default(0) // 0-100 percentage
+  lastScanAt      DateTime?
+  
+  // Settings
+  autoScanEnabled Boolean  @default(true)
+  autoFixEnabled  Boolean  @default(false)
+  webhookConfigured Boolean @default(false)
+  webhookId       String?  // GitHub webhook ID
+  
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // Relations
+  vulnerabilities Vulnerability[]
+  scans          Scan[]
+  activities     Activity[]
+  fixPullRequests FixPullRequest[]
+
+  @@map("repositories")
+}
+
+model Vulnerability {
+  id              String                @id @default(cuid())
+  repositoryId    String
+  repository      Repository            @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  scanId          String?
+  scan            Scan?                 @relation(fields: [scanId], references: [id], onDelete: SetNull)
+  
+  // Vulnerability details
+  type            String                // SQL Injection, XSS, etc.
+  title           String
+  description     String
+  severity        VulnerabilitySeverity
+  status          VulnerabilityStatus   @default(OPEN)
+  
+  // Location in code
+  filePath        String
+  lineNumber      Int
+  codeSnippet     String                // The vulnerable code
+  
+  // Analysis details
+  explanation     String?               // LLM-generated explanation
+  impact          String?               // What could happen
+  recommendation  String?               // How to fix it
+  
+  // Security standards
+  cweId           String?               // CWE-89, etc.
+  owaspCategory   String?               // A03:2021 - Injection
+  cvssScore       Float?                // 0-10 CVSS score
+  
+  // Auto-fix information
+  autoFixAvailable Boolean              @default(false)
+  fixConfidence   Float?                // 0-1 confidence score
+  fixCode         String?               // Generated fix code
+  fixDescription  String?               // Explanation of the fix
+  
+  // Detection metadata
+  detectionMethod String?               // bedrock, codeguru, etc.
+  aiModel         String?               // claude-3-5-sonnet, etc.
+  
+  // Timestamps
+  detectedAt      DateTime              @default(now())
+  resolvedAt      DateTime?
+  acknowledgedAt  DateTime?
+  
+  // Relations
+  fixPullRequest  FixPullRequest?
+  activities      Activity[]
+
+  @@map("vulnerabilities")
+}
+
+model Scan {
+  id              String      @id @default(cuid())
+  repositoryId    String
+  repository      Repository  @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  
+  // Scan details
+  triggerType     ScanTrigger
+  status          ScanStatus  @default(PENDING)
+  commitSha       String?     // Git commit that triggered the scan
+  branch          String?
+  
+  // Scan metrics
+  filesScanned    Int         @default(0)
+  linesScanned    Int         @default(0)
+  vulnerabilitiesFound Int    @default(0)
+  newVulnerabilities Int      @default(0)
+  fixedVulnerabilities Int    @default(0)
+  
+  // Timing
+  startedAt       DateTime?
+  completedAt     DateTime?
+  durationMs      Int?        // Duration in milliseconds
+  
+  // Results storage
+  s3ReportPath    String?     // Path to full scan report in S3
+  
+  // Error handling
+  errorMessage    String?
+  retryCount      Int         @default(0)
+  
+  // Timestamps
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  // Relations
+  vulnerabilities Vulnerability[]
+  activities      Activity[]
+
+  @@map("scans")
+}
+
+model FixPullRequest {
+  id              String            @id @default(cuid())
+  vulnerabilityId String            @unique
+  vulnerability   Vulnerability     @relation(fields: [vulnerabilityId], references: [id], onDelete: Cascade)
+  repositoryId    String
+  repository      Repository        @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  
+  // GitHub PR details
+  prNumber        Int
+  prUrl           String
+  branchName      String
+  commitSha       String?
+  
+  // PR status
+  status          PullRequestStatus @default(CREATED)
+  
+  // Changes made
+  filesChanged    Int               @default(0)
+  linesAdded      Int               @default(0)
+  linesRemoved    Int               @default(0)
+  
+  // AI confidence and metadata
+  aiConfidenceScore Float           // 0-1 confidence in the fix
+  aiModel         String?           // Which AI model generated the fix
+  
+  // Timestamps
+  createdAt       DateTime          @default(now())
+  mergedAt        DateTime?
+  closedAt        DateTime?
+  updatedAt       DateTime          @updatedAt
+
+  @@map("fix_pull_requests")
+}
+
+model Activity {
+  id           String       @id @default(cuid())
+  userId       String?
+  user         User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  repositoryId String?
+  repository   Repository?  @relation(fields: [repositoryId], references: [id], onDelete: SetNull)
+  scanId       String?
+  scan         Scan?        @relation(fields: [scanId], references: [id], onDelete: SetNull)
+  vulnerabilityId String?
+  vulnerability Vulnerability? @relation(fields: [vulnerabilityId], references: [id], onDelete: SetNull)
+  
+  // Activity details
+  type         ActivityType
+  title        String
+  description  String?
+  severity     VulnerabilitySeverity?
+  
+  // Additional data
+  metadata     Json?        // Flexible storage for event-specific data
+  
+  // Timestamps
+  createdAt    DateTime     @default(now())
+
+  @@map("activities")
+}
+
+model Notification {
+  id          String                @id @default(cuid())
+  userId      String
+  user        User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Notification details
+  type        String                // vulnerability, scan-complete, system, security-alert
+  title       String
+  message     String
+  severity    VulnerabilitySeverity?
+  
+  // Status
+  isRead      Boolean               @default(false)
+  readAt      DateTime?
+  
+  // Optional action
+  actionUrl   String?               // URL to navigate to when clicked
+  
+  // Timestamps
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  @@map("notifications")
+}
+
+model ApiKey {
+  id          String   @id @default(cuid())
+  name        String   // Human-readable name for the key
+  key         String   @unique // The actual API key (hashed)
+  userId      String?  // Optional: associate with a user
+  
+  // Permissions
+  permissions Json     // Array of permissions: ["read:repos", "write:scans"]
+  
+  // Usage tracking
+  lastUsedAt  DateTime?
+  usageCount  Int      @default(0)
+  
+  // Status
+  isActive    Boolean  @default(true)
+  expiresAt   DateTime?
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("api_keys")
+}

@@ -1,0 +1,28 @@
+{
+  "name": "codeguardian-ai",
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_API_BASE_URL": "https://codeguardian-api.vercel.app/api"
+  },
+  "functions": {
+    "app/api/**.ts": {
+      "maxDuration": 30
+    }
+  }
+}
