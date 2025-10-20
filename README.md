@@ -5,6 +5,96 @@
 
 A cutting-edge, AI-powered code security scanner that leverages **Amazon Web Services (AWS)** for scalable, real-time vulnerability detection and automated remediation. Built with Next.js 15 frontend and Node.js backend, featuring AWS Bedrock AI integration and enterprise-ready cloud architecture.
 
+## 🛠️ Technology Stack & Frameworks
+
+### **Frontend Framework**
+- **Next.js 15.2.4** - React framework with App Router and Server-Side Rendering
+- **React 19** - Latest React with concurrent features and improved performance
+- **TypeScript 5** - Type-safe development with modern ES features
+
+### **UI/UX Frameworks**
+- **Tailwind CSS 4.1.9** - Utility-first CSS framework for rapid styling
+- **Radix UI** - Headless, accessible component primitives
+- **shadcn/ui** - Beautiful, reusable components built on Radix UI
+- **Lucide React** - Modern icon library with 1000+ icons
+- **Framer Motion** (via CSS animations) - Smooth animations and transitions
+
+### **Component Libraries**
+- **@radix-ui/react-*** - Complete set of accessible components:
+  - Dialog, Dropdown, Navigation, Tabs, Toast, Tooltip
+  - Form controls, Data display, Overlay components
+- **React Hook Form 7.60.0** - Performant forms with easy validation
+- **Zod 3.25.76** - TypeScript-first schema validation
+
+### **Data Visualization**
+- **Recharts** - Composable charting library for React
+- **Custom Chart Components** - Built with SVG and CSS animations
+
+### **State Management & Data Fetching**
+- **React Hooks** - useState, useEffect, useContext for state management
+- **Native Fetch API** - HTTP client for API communication
+- **Server-Side Rendering** - Next.js SSR for optimal performance
+
+### **Backend/API Framework**
+- **Next.js API Routes** - Serverless API endpoints
+- **Node.js 18+** - JavaScript runtime with ES Modules support
+- **Express.js** (for standalone backend) - Web application framework
+
+### **Database & Storage**
+- **PostgreSQL** - Primary relational database
+- **Prisma ORM** - Type-safe database client and query builder
+- **Redis** - In-memory caching and session storage
+
+### **Authentication & Security**
+- **JWT (JSON Web Tokens)** - Secure authentication
+- **bcryptjs** - Password hashing
+- **Helmet.js** - Security middleware for Express
+- **CORS** - Cross-origin resource sharing configuration
+
+### **AI/ML Integration**
+- **AWS Bedrock** - Claude 3.5 Sonnet for AI-powered code analysis
+- **AWS SDK v3** - Official AWS SDK for JavaScript/TypeScript
+
+### **Development Tools**
+- **pnpm 10.18.3** - Fast, disk space efficient package manager
+- **ESLint** - Code linting and style enforcement
+- **Prettier** - Code formatting
+- **PostCSS** - CSS processing and optimization
+
+### **Build & Deployment**
+- **Vercel** - Primary deployment platform (optimized for Next.js)
+- **Railway** - Alternative deployment option
+- **Docker** - Containerization for production deployments
+- **GitHub Actions** - CI/CD pipeline automation
+
+### **Real-time Features**
+- **WebSocket (ws)** - Real-time bidirectional communication
+- **Server-Sent Events** - Live dashboard updates
+- **Progressive Enhancement** - Graceful degradation for connectivity issues
+
+### **Testing & Quality Assurance**
+- **Jest** - JavaScript testing framework
+- **Supertest** - HTTP assertion library
+- **TypeScript Compiler** - Static type checking
+
+### **AWS Cloud Services**
+- **Amazon Bedrock** - AI/ML services for code analysis
+- **Amazon S3** - Object storage for scan results and reports
+- **Amazon RDS** - Managed PostgreSQL database
+- **Amazon ElastiCache** - Managed Redis for caching
+- **AWS Lambda** - Serverless compute for webhooks
+- **Amazon SQS** - Message queuing service
+- **AWS API Gateway** - API management and WebSocket support
+
+### **Package Manager & Dependencies**
+```json
+{
+  "packageManager": "pnpm@10.18.3",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+
 ## 🌟 Why AWS Powers CodeGuardian AI
 
 **CodeGuardian AI is architected as a cloud-first solution leveraging AWS services for:**
