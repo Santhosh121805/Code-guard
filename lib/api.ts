@@ -1,6 +1,6 @@
 // API Configuration and utilities for CodeGuardian AI Frontend
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '/api';
 
 // API Client class for handling all backend communication
 class ApiClient {
