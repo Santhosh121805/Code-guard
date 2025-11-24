@@ -1,36 +1,50 @@
 "use client"
 
 import { useParams } from "next/navigation"
-import { DashboardHeader } from "@/components/dashboard/dashboard-header"
-import { Sidebar } from "@/components/dashboard/sidebar"
-import { RepositoryOverview } from "@/components/dashboard/repository/repository-overview"
-import { VulnerabilityBreakdown } from "@/components/dashboard/repository/vulnerability-breakdown"
-import { ActivityTimeline } from "@/components/dashboard/repository/activity-timeline"
-import { useState } from "react"
 
 export default function RepositoryDetailPage() {
   const params = useParams()
-  const [sidebarOpen, setSidebarOpen] = useState(true)
 
   return (
-    <div className="flex h-screen bg-background">
-      <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
-
-      <main className="flex-1 overflow-auto">
-        <DashboardHeader onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
-
-        <div className="p-6 space-y-6">
-          <RepositoryOverview repoId={params.id as string} />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2">
-              <VulnerabilityBreakdown repoId={params.id as string} />
+    <div className="min-h-screen bg-gray-900 text-white">
+      <div className="p-6">
+        <h1 className="text-3xl font-bold mb-6">Repository Details</h1>
+        <p className="text-lg mb-4">Repository ID: {params.id}</p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-gray-800 p-6 rounded-lg">
+            <h2 className="text-xl font-bold mb-4">Repository Overview</h2>
+            <div className="space-y-2">
+              <p><span className="font-semibold">Name:</span> example-repo</p>
+              <p><span className="font-semibold">Language:</span> JavaScript</p>
+              <p><span className="font-semibold">Last Scan:</span> 2 hours ago</p>
+              <p><span className="font-semibold">Status:</span> <span className="text-green-400">Healthy</span></p>
             </div>
-            <div>
-              <ActivityTimeline repoId={params.id as string} />
+          </div>
+          
+          <div className="bg-gray-800 p-6 rounded-lg">
+            <h2 className="text-xl font-bold mb-4">Vulnerability Breakdown</h2>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span>Critical</span>
+                <span className="text-red-400 font-bold">1</span>
+              </div>
+              <div className="flex justify-between">
+                <span>High</span>
+                <span className="text-orange-400 font-bold">3</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Medium</span>
+                <span className="text-yellow-400 font-bold">7</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Low</span>
+                <span className="text-blue-400 font-bold">12</span>
+              </div>
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   )
 }
