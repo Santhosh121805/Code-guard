@@ -1,6 +1,7 @@
 "use client"
 
 import { Menu, Bell, User } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 interface DashboardHeaderProps {
   onMenuClick: () => void
@@ -17,14 +18,14 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
         <h1 className="text-xl font-bold hidden md:block">Dashboard</h1>
 
         <div className="flex items-center gap-4">
-          <button className="relative p-2 hover:bg-accent rounded-lg">
+          <Button variant="ghost" size="icon" className="relative">
             <Bell className="w-5 h-5" />
             <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full" />
-          </button>
+          </Button>
 
-          <button className="p-2 hover:bg-accent rounded-lg">
+          <Button variant="ghost" size="icon">
             <User className="w-5 h-5" />
-          </button>
+          </Button>
         </div>
       </div>
     </header>
