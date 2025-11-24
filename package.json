@@ -4,7 +4,7 @@
   "private": true,
   "packageManager": "pnpm@10.18.3",
   "scripts": {
-    "build": "next build",
+    "build": "npm install --legacy-peer-deps && next build",
     "dev": "next dev --port 3002",
     "lint": "eslint .",
     "start": "next start --port 3000"
@@ -60,7 +60,6 @@
     "sonner": "^1.7.4",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
-    "vaul": "^0.9.9",
     "zod": "3.25.76"
   },
   "devDependencies": {
