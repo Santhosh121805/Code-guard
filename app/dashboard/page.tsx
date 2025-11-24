@@ -1,6 +1,6 @@
 "use client"
 
-import { DashboardHeader } from "@/components/dashboard/dashboard-header"
+import { DashboardHeader } from "@/components/dashboard-header-test"
 
 export default function DashboardPage() {
   return (
@@ -9,7 +9,7 @@ export default function DashboardPage() {
         <DashboardHeader onMenuClick={() => {}} />
         <div className="p-6">
           <h1 className="text-2xl font-bold">Dashboard</h1>
-          <p>Testing dashboard header component...</p>
+          <p>Testing dashboard header component from root...</p>
         </div>
       </main>
     </div>
