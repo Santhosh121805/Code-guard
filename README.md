@@ -1,6 +1,5 @@
 
-# CodeGuardian AI 🛡️⚡ live link:- https://dev-planet-c6b7ja65b-ssanthoshs418-gmailcoms-projects.vercel.app?_vercel_share=NpoGS89yun5dv2YV80XK3ncSCEiBp8dP
-
+# CodeGuardian AI 🛡️⚡
 **Enterprise-Grade Autonomous Security Platform powered by AWS Cloud Infrastructure**
 
 A cutting-edge, AI-powered code security scanner that leverages **Amazon Web Services (AWS)** for scalable, real-time vulnerability detection and automated remediation. Built with Next.js 15 frontend and Node.js backend, featuring AWS Bedrock AI integration and enterprise-ready cloud architecture.
