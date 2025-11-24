@@ -4,7 +4,7 @@
   "private": true,
   "packageManager": "pnpm@10.18.3",
   "scripts": {
-    "build": "npm install --legacy-peer-deps && next build",
+    "build": "next build",
     "dev": "next dev --port 3002",
     "lint": "eslint .",
     "start": "next start --port 3000"
@@ -63,13 +63,13 @@
     "tailwind-merge": "^2.5.5",
     "tailwindcss": "^4.1.9",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "3.25.76"
-  },
-  "devDependencies": {
+    "zod": "3.25.76",
     "@types/node": "^22",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "tw-animate-css": "1.3.3",
     "typescript": "^5"
+  },
+  "devDependencies": {
+    "tw-animate-css": "1.3.3"
   }
 }
